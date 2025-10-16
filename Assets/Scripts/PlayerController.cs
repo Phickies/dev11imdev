@@ -1,9 +1,11 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
-
-public class PlayerController : MonoBehaviour
+namespace Assets.Scripts
 {
+    [RequireComponent(typeof(CharacterController))]
+
+    public class PlayerController : MonoBehaviour
+    {
     [Header("References")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private GameManager gameManager;
@@ -22,7 +24,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    [System.Obsolete]
     private void Start()
     {
         // Initialize character controller reference if not assigned
@@ -34,7 +35,7 @@ public class PlayerController : MonoBehaviour
         // Find GameManager in the scene if not assigned
         if (gameManager == null)
         {
-            gameManager = FindObjectOfType<GameManager>();
+            gameManager = FindFirstObjectByType<GameManager>();
         }
     }
 
@@ -128,5 +129,6 @@ public class PlayerController : MonoBehaviour
 
         // Left Shift for running
         runInput = Input.GetKey(KeyCode.LeftShift);
+    }
     }
 }

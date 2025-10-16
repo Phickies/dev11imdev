@@ -1,7 +1,9 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Assets.Scripts
 {
+    public class GameManager : MonoBehaviour
+    {
     [Header("Game Settings")]
     public float gravity = -9.81f;
 
@@ -15,5 +17,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
     }
 }
