@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class Card
+[CreateAssetMenu(menuName = "Card System/Card")]
+public class Card : ScriptableObject
 {
     public int index;
-    public string name;
+    public string cardName;
     public string description;
     public Effect effect;
 }

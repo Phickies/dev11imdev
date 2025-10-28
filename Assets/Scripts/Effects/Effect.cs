@@ -1,7 +1,9 @@
+using Assets.Scripts;
 using UnityEngine;
 
-abstract class Effect
+public abstract class Effect : ScriptableObject
 {
-    void ApplyEffect(PlayerController controller);
-    void RemoveEffect(PlayerController controller);
+    public abstract void ApplyEffect(PlayerController controller);
+
+    public abstract void RemoveEffect(PlayerController stats);
 }

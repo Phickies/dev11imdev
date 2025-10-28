@@ -1,9 +1,11 @@
+using Assets.Scripts;
+using System.Collections.Generic;
 using UnityEngine;
-using Card.cs;
-using System.Net.Sockets;
+
 public class CardManager : MonoBehaviour
 {
-    List<Card> availableCards;
+    public List<Card> availableCards = new List<Card>();
+    public PlayerController controller;
     void Start()
     {
         
@@ -15,9 +17,14 @@ public class CardManager : MonoBehaviour
 
     }
 
-    void AddCard(Card card)
+    public void AddCard(Card card)
     {
-        
+        availableCards.Add(card);
+        if(card.effect != null)
+        {
+            card.effect.ApplyEffect(controller);
+        }
+        Debug.Log("Picked up " + card.name);
     }
     void RemoveCard(Card card)
     {

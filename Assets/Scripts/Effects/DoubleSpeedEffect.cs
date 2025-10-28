@@ -1,14 +1,21 @@
 using UnityEngine;
-using Effect.cs;
-using System.Diagnostics;
+using Assets.Scripts;
 
+[CreateAssetMenu(menuName = "Card System/Effects/Speed Boost")]
 public class DoubleSpeedEffect : Effect
 {
     public float speedMultiplier = 2f;
-    
-    void ApplyEffect()
+
+    public override void ApplyEffect(PlayerController controller)
     {
-        Debug.log("triggered");
+        controller.walkSpeed *= speedMultiplier;
+        controller.runSpeed *= speedMultiplier;
     }
-  
+
+    public override void RemoveEffect(PlayerController controller)
+    {
+        //TODO: a bit unsafe so ill have to check
+        controller.walkSpeed /= speedMultiplier;
+        controller.runSpeed /= speedMultiplier;
+    }
 }

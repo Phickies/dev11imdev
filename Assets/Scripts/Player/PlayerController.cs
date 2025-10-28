@@ -11,15 +11,15 @@ namespace Assets.Scripts
         [SerializeField] private GameManager gameManager;
 
         [Header("Movement Settings")]
-        [SerializeField] private float walkSpeed = 5f;
-        [SerializeField] private float runSpeed = 10f;
-        [SerializeField] private float jumpHeight = 3.5f;
+        [SerializeField] public float walkSpeed = 5f;
+        [SerializeField] public float runSpeed = 10f;
+        [SerializeField] public float jumpHeight = 3.5f;
 
         [Header("Input")]
         private float horizontalInput;
         private float verticalInput;
-        private bool jumpInput;
-        private bool runInput;
+        public bool jumpInput;
+        public bool runInput;
 
         private Vector3 velocity;
 
