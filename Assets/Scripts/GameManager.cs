@@ -4,8 +4,7 @@ namespace Assets.Scripts
 {
     public class GameManager : MonoBehaviour
     {
-        [Header("Game Settings")]
-        public float gravity = -9.81f;
+        [SerializeField] private float gravity = -30.24f;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
@@ -16,7 +15,17 @@ namespace Assets.Scripts
         // Update is called once per frame
         void Update()
         {
-            
+
+        }
+
+        public float GetGravity()
+        {
+            return gravity;
+        }
+        
+        public void UpdateGravity(float value)
+        {
+            gravity = value;
         }
     }
 }
