@@ -26,6 +26,11 @@ public class PlayerManager : MonoBehaviour
     [Header("Card Management")]
     private CardData currentCard; // The current card the player is holding
 
+    [Header("Debug Settings")]
+    [SerializeField] private bool enableDebugLogs = false;
+    [SerializeField] public bool invincible = false;
+    [SerializeField] public bool infiniteDash = false;
+
     // Fall tracking variables
     private bool isFalling = false;
     private bool isDead = false;
@@ -33,22 +38,43 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        // Initialize health
         currentHealth = maxHealth;
 
-        // Get CharacterController if not assigned
         if (characterController == null)
         {
             characterController = GetComponent<CharacterController>();
         }
 
-        // Initialize highest point
         highestPoint = transform.position.y;
+
+        // Give dash card if infinite dash is enabled
+        if (infiniteDash)
+        {
+            GiveTestDashCard();
+        }
+    }
+
+    // Gives player a dash card for testing
+    private void GiveTestDashCard()
+    {
+        CardData dashCard = new()
+        {
+            cardName = "Dash Card",
+            effectType = EffectType.Dash,
+            value = 10f
+        };
+        SetCurrentCard(dashCard);
     }
 
     void Update()
     {
         CheckFallDamage();
+
+        // Ensure player always has dash card if infinite dash is enabled
+        if (infiniteDash && (currentCard == null || currentCard.effectType != EffectType.Dash))
+        {
+            GiveTestDashCard();
+        }
     }
 
     // Check for fall damage
@@ -100,8 +126,23 @@ public class PlayerManager : MonoBehaviour
     // Apply damage to the player
     public void TakeDamage(int damage)
     {
+        // If invincible, ignore all damage
+        if (invincible)
+        {
+            if (enableDebugLogs)
+            {
+                Debug.Log($"Invincible mode: Blocked {damage} damage");
+            }
+            return;
+        }
+
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        if (enableDebugLogs)
+        {
+            Debug.Log($"Took {damage} damage. Current health: {currentHealth}/{maxHealth}");
+        }
 
         if (currentHealth <= 0)
         {
@@ -152,14 +193,7 @@ public class PlayerManager : MonoBehaviour
     public void SetCurrentCard(CardData card)
     {
         currentCard = card;
-        if (card != null)
-        {
-            currentEffect = card.effectType;
-        }
-        else
-        {
-            currentEffect = EffectType.None;
-        }
+        currentEffect = card != null ? card.effectType : EffectType.None;
     }
 
     // Get the current card
@@ -171,7 +205,29 @@ public class PlayerManager : MonoBehaviour
     // Clear the current card (after using it)
     public void ClearCurrentCard()
     {
+        // If infinite dash is enabled and current card is a dash, don't clear it
+        if (infiniteDash && currentCard != null && currentCard.effectType == EffectType.Dash)
+        {
+            if (enableDebugLogs)
+            {
+                Debug.Log("Infinite dash: Card not consumed");
+            }
+            return;
+        }
+
         currentCard = null;
         currentEffect = EffectType.None;
+    }
+
+    // Check if infinite dash is enabled
+    public bool HasInfiniteDash()
+    {
+        return infiniteDash;
+    }
+
+    // Check if invincible is enabled
+    public bool IsInvincible()
+    {
+        return invincible;
     }
 }
