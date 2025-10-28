@@ -7,6 +7,9 @@ namespace Assets.Scripts
         [Header("References")]
         [SerializeField] private Transform playerBody;
 
+        [Header("Camera Settings")]
+        [SerializeField] private Vector3 offset = new (0f, 1.7f, 0f);
+
         [Header("Mouse Settings")]
         [SerializeField] private float mouseSensitivity = 2f;
         [SerializeField] private float minVerticalAngle = -90f;
@@ -24,6 +27,9 @@ namespace Assets.Scripts
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
+            // Offset the camera for player view
+            gameObject.transform.position = playerBody.transform.position + offset;
+
             // Find player body if not assigned
             if (playerBody == null && transform.parent != null)
             {
@@ -31,7 +37,7 @@ namespace Assets.Scripts
             }
         }
 
-        #pragma warning disable S2325
+#pragma warning disable S2325
         private void Update()
         {
             // Handle cursor lock/unlock in Update (input detection)
