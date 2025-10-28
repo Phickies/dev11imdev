@@ -40,6 +40,13 @@ namespace Assets.Scripts
         private float slowEndTime = 0f;
         private float speedMultiplier = 1f; // Normal speed multiplier
 
+        // Dash effect variables
+        private bool isDashing = false;
+        private float dashEndTime = 0f;
+        private Vector3 dashDirection;
+        private float dashSpeed = 0f;
+        [SerializeField] private float dashDuration = 0.3f; // Duration of dash in seconds
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
         {
@@ -58,7 +65,33 @@ namespace Assets.Scripts
             // Initialize PlayerManager reference if not assigned
             if (player == null)
             {
-                player = GetComponent<PlayerManager>();
+                // Get all PlayerManager components on this GameObject
+                PlayerManager[] managers = GetComponents<PlayerManager>();
+
+                if (managers.Length > 1)
+                {
+                    Debug.LogWarning($"Found {managers.Length} PlayerManager components! Using the one with infiniteDash enabled.");
+
+                    // Find the one with infiniteDash enabled
+                    foreach (var mgr in managers)
+                    {
+                        if (mgr.infiniteDash)
+                        {
+                            player = mgr;
+                            break;
+                        }
+                    }
+
+                    // If none found with infiniteDash, use the first one
+                    if (player == null)
+                    {
+                        player = managers[0];
+                    }
+                }
+                else
+                {
+                    player = GetComponent<PlayerManager>();
+                }
             }
         }
 
@@ -102,18 +135,30 @@ namespace Assets.Scripts
             // Update slow effect status
             UpdateSlowEffect();
 
-            // Calculate movement speed (walk or run)
-            float currentSpeed = runInput ? runSpeed : walkSpeed;
+            // Update dash effect status
+            UpdateDashEffect();
 
-            // Apply speed multiplier (for slow effect)
-            currentSpeed *= speedMultiplier;
+            // If dashing, override normal movement
+            if (isDashing)
+            {
+                velocity.x = dashDirection.x * dashSpeed;
+                velocity.z = dashDirection.z * dashSpeed;
+            }
+            else
+            {
+                // Calculate movement speed (walk or run)
+                float currentSpeed = runInput ? runSpeed : walkSpeed;
 
-            // W/S for forward/backward, A/D for left/right strafing
-            Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
+                // Apply speed multiplier (for slow effect)
+                currentSpeed *= speedMultiplier;
 
-            // Apply horizontal movement (keep y velocity separate for jumping/gravity)
-            velocity.x = moveDirection.x;
-            velocity.z = moveDirection.z;
+                // W/S for forward/backward, A/D for left/right strafing
+                Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
+
+                // Apply horizontal movement (keep y velocity separate for jumping/gravity)
+                velocity.x = moveDirection.x;
+                velocity.z = moveDirection.z;
+            }
         }
 
         // Handle jumping movement
@@ -188,6 +233,7 @@ namespace Assets.Scripts
             if (Input.GetMouseButtonDown(1))
             {
                 CardData currentCard = player.GetCurrentCard();
+
                 if (currentCard != null)
                 {
                     switch (currentCard.effectType)
@@ -200,8 +246,6 @@ namespace Assets.Scripts
                             break;
                         case EffectType.Slow:
                             ApplySlowEffect(currentCard);
-                            break;
-                        default:
                             break;
                     }
 
@@ -251,14 +295,13 @@ namespace Assets.Scripts
             }
         }
 
-        // Apply dash effect - instant forward movement
+        // Apply dash effect - fast forward movement
         private void ApplyDashingEffect(CardData card)
         {
             if (card != null)
             {
                 // Get the forward direction (camera forward for better control)
                 Camera mainCamera = Camera.main;
-                Vector3 dashDirection;
 
                 if (mainCamera != null)
                 {
@@ -273,13 +316,23 @@ namespace Assets.Scripts
                     dashDirection = transform.forward;
                 }
 
-                // Calculate dash distance
+                // Calculate dash speed needed to cover the distance in dashDuration
                 float dashDistance = card.value;
+                dashSpeed = dashDistance / dashDuration;
 
-                // Move the character controller instantly
-                characterController.Move(dashDirection * dashDistance);
+                // Start dashing
+                isDashing = true;
+                dashEndTime = Time.time + dashDuration;
+            }
+        }
 
-                Debug.Log($"Applied {card.cardName}: Dashed {card.value} units forward");
+        // Update dash effect timer
+        private void UpdateDashEffect()
+        {
+            if (isDashing && Time.time >= dashEndTime)
+            {
+                isDashing = false;
+                dashSpeed = 0f;
             }
         }
 

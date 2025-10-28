@@ -18296,6 +18296,9 @@ MonoBehaviour:
   maxHealth: 100
   fallDamageThreshold: 5
   fallDamageMultiplier: 5
+  enableDebugLogs: 1
+  invincible: 1
+  infiniteDash: 1
 --- !u!114 &1756787100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18309,11 +18312,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 0}
-  walkSpeed: 5
-  runSpeed: 8
-  jumpHeight: 3
+  walkSpeed: 8
+  runSpeed: 15
+  jumpHeight: 2
   bulletPrefab: {fileID: 8294167727389061353, guid: b54b485b180104625b910bd770d2d01a, type: 3}
   bulletSpeed: 40
+  dashDuration: 0.3
 --- !u!114 &1756787101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18329,6 +18333,9 @@ MonoBehaviour:
   maxHealth: 100
   fallDamageThreshold: 5
   fallDamageMultiplier: 5
+  enableDebugLogs: 0
+  invincible: 0
+  infiniteDash: 0
 --- !u!43 &1786228386
 Mesh:
   m_ObjectHideFlags: 0
