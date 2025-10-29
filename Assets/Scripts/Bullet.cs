@@ -11,6 +11,12 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        EnemyController enemy = collision.gameObject.GetComponent<EnemyController>();
+        if (enemy != null)
+        {
+            //poop ur pants
+            enemy.GetHit();
+        }
         Destroy(gameObject);
     }
 }
