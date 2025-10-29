@@ -24,5 +24,6 @@ public class CardPickup : MonoBehaviour
             Debug.Log("Player picked up a card: " + cardToGive.name);
             cardManager.AddCard(cardToGive);
         }
+        Destroy(gameObject);
     }
 }
