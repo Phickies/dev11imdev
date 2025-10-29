@@ -8,6 +8,7 @@ namespace Assets.Scripts
     {
         [Header("References")]
         [SerializeField] private GameManager gameManager;
+        [SerializeField] private Cards cards;
         private CharacterController characterController;
 
         private PlayerManager player;
@@ -47,6 +48,10 @@ namespace Assets.Scripts
         private float dashSpeed = 0f;
         [SerializeField] private float dashDuration = 0.3f; // Duration of dash in seconds
 
+        // Jump boost effect variables
+        private bool hasJumpBoost = false;
+        private float jumpBoostAmount = 0f;
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
         {
@@ -60,6 +65,12 @@ namespace Assets.Scripts
             if (gameManager == null)
             {
                 gameManager = FindFirstObjectByType<GameManager>();
+            }
+
+            // Find Cards in the scene if not assigned
+            if (cards == null)
+            {
+                cards = FindFirstObjectByType<Cards>();
             }
 
             // Initialize PlayerManager reference if not assigned
@@ -119,12 +130,6 @@ namespace Assets.Scripts
             // Apply gravity
             GravityManagement();
 
-            // Handle shooting
-            ShootingManagement();
-
-            // Handle apply card effects
-            ApplyEffectManagement();
-
             // Move the character controller
             characterController.Move(velocity * Time.deltaTime);
         }
@@ -166,8 +171,18 @@ namespace Assets.Scripts
         {
             if (jumpInput && characterController.isGrounded)
             {
+                // Calculate effective jump height with boost if active
+                float effectiveJumpHeight = jumpHeight + (hasJumpBoost ? jumpBoostAmount : 0f);
+
                 // Apply jump velocity using physics formula
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gameManager.GetGravity());
+                velocity.y = Mathf.Sqrt(effectiveJumpHeight * -2f * gameManager.GetGravity());
+
+                // Consume jump boost after one use
+                if (hasJumpBoost)
+                {
+                    hasJumpBoost = false;
+                    jumpBoostAmount = 0f;
+                }
             }
         }
 
@@ -190,8 +205,74 @@ namespace Assets.Scripts
             }
         }
 
+        // Handle player input
+        private void InputManagement()
+        {
+            HandleMovementInput();
+            HandleCardSelection();
+            HandleShootingInput();
+            HandleApplyEffect();
+        }
+
+        // Handle movement input (WASD)
+        private void HandleMovementInput()
+        {
+            // If both A and D are pressed, cancel out horizontal movement
+            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
+            {
+                horizontalInput = 0f;
+            }
+            else
+            {
+                horizontalInput = Input.GetAxis("Horizontal"); // A/D for strafing left/right
+            }
+
+            // If both W and S are pressed, cancel out vertical movement
+            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S))
+            {
+                verticalInput = 0f;
+            }
+            else
+            {
+                verticalInput = Input.GetAxis("Vertical"); // W/S for forward/backward
+            }
+
+            // Space for jumping
+            jumpInput = Input.GetButtonDown("Jump");
+
+            // Left Shift for running
+            runInput = Input.GetKey(KeyCode.LeftShift);
+        }
+
+        // Handle card selection input (keys 1-5)
+        private void HandleCardSelection()
+        {
+            if (cards == null) return;
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                cards.SelectCardSlot(0, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                cards.SelectCardSlot(1, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                cards.SelectCardSlot(2, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                cards.SelectCardSlot(3, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                cards.SelectCardSlot(4, player);
+            }
+        }
+
         // Handle player shooting
-        private void ShootingManagement()
+        private void HandleShootingInput()
         {
             if (Input.GetMouseButtonDown(0) && bulletPrefab != null)
             {
@@ -228,61 +309,41 @@ namespace Assets.Scripts
         }
 
         // Handle player apply effect
-        private void ApplyEffectManagement()
+        private void HandleApplyEffect()
         {
             if (Input.GetMouseButtonDown(1))
             {
-                CardData currentCard = player.GetCurrentCard();
+                if (cards == null) return;
 
-                if (currentCard != null)
+                // Get the currently selected card from hand
+                CardData selectedCard = cards.GetSelectedCard(player);
+
+                if (selectedCard != null)
                 {
-                    switch (currentCard.effectType)
+                    switch (selectedCard.effectType)
                     {
                         case EffectType.Heal:
-                            ApplyHealingEffect(currentCard);
+                            ApplyHealingEffect(selectedCard);
                             break;
                         case EffectType.Dash:
-                            ApplyDashingEffect(currentCard);
+                            ApplyDashingEffect(selectedCard);
                             break;
                         case EffectType.Slow:
-                            ApplySlowEffect(currentCard);
+                            ApplySlowEffect(selectedCard);
+                            break;
+                        case EffectType.JumpBoost:
+                            ApplyJumpBoostEffect(selectedCard);
                             break;
                     }
 
-                    // Clear the card after using it
-                    player.ClearCurrentCard();
+                    // Clear the selected card after using it (respects infinite effects)
+                    cards.ClearSelectedCard(player);
+                }
+                else
+                {
+                    Debug.Log("No card selected! Press 1-5 to select a card first.");
                 }
             }
-        }
-
-        // Handle player input
-        private void InputManagement()
-        {
-            // If both A and D are pressed, cancel out horizontal movement
-            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
-            {
-                horizontalInput = 0f;
-            }
-            else
-            {
-                horizontalInput = Input.GetAxis("Horizontal"); // A/D for strafing left/right
-            }
-
-            // If both W and S are pressed, cancel out vertical movement
-            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S))
-            {
-                verticalInput = 0f;
-            }
-            else
-            {
-                verticalInput = Input.GetAxis("Vertical"); // W/S for forward/backward
-            }
-
-            // Space for jumping
-            jumpInput = Input.GetButtonDown("Jump");
-
-            // Left Shift for running
-            runInput = Input.GetKey(KeyCode.LeftShift);
         }
 
         // Apply healing effect from card
@@ -359,6 +420,16 @@ namespace Assets.Scripts
                 isSlowed = false;
                 speedMultiplier = 1f;
                 Debug.Log("Slow effect ended - speed restored to normal");
+            }
+        }
+
+        // Apply jump boost effect - increases jump height for one jump only
+        private void ApplyJumpBoostEffect(CardData card)
+        {
+            if (card != null)
+            {
+                hasJumpBoost = true;
+                jumpBoostAmount = card.value;
             }
         }
     }
