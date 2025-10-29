@@ -24,7 +24,6 @@ public class PlayerManager : MonoBehaviour
     private EffectType currentEffect;
 
     [Header("Card Management")]
-    private CardData currentCard; // The current card the player is holding
 
     // Fall tracking variables
     private bool isFalling = false;
@@ -146,32 +145,5 @@ public class PlayerManager : MonoBehaviour
     public bool IsDead()
     {
         return isDead;
-    }
-
-    // Set the current card (called when player picks up a card)
-    public void SetCurrentCard(CardData card)
-    {
-        currentCard = card;
-        if (card != null)
-        {
-            currentEffect = card.effectType;
-        }
-        else
-        {
-            currentEffect = EffectType.None;
-        }
-    }
-
-    // Get the current card
-    public CardData GetCurrentCard()
-    {
-        return currentCard;
-    }
-
-    // Clear the current card (after using it)
-    public void ClearCurrentCard()
-    {
-        currentCard = null;
-        currentEffect = EffectType.None;
     }
 }

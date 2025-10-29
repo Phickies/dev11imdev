@@ -15,4 +15,4 @@ MonoBehaviour:
   index: 0
   cardName: 
   description: 
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: 31e7cfe8b86cc5d4da89f32bf49b5bbb, type: 2}

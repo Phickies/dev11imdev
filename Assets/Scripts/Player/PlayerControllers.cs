@@ -17,9 +17,9 @@ namespace Assets.Scripts
         private readonly float airDrag = 0.1f; // Resistance when falling
 
         [Header("Movement Settings")]
-        [SerializeField] private float walkSpeed = 5f;
-        [SerializeField] private float runSpeed = 10f;
-        [SerializeField] private float jumpHeight = 3.5f;
+        [SerializeField] public float walkSpeed = 5f;
+        [SerializeField] public float runSpeed = 10f;
+        [SerializeField] public float jumpHeight = 3.5f;
 
         [Header("Shooting Settings")]
         [SerializeField] private GameObject bulletPrefab;
@@ -34,11 +34,6 @@ namespace Assets.Scripts
         private bool runInput;
 
         private Vector3 velocity;
-
-        [Header("Effect Settings")]
-        private bool isSlowed = false;
-        private float slowEndTime = 0f;
-        private float speedMultiplier = 1f; // Normal speed multiplier
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
@@ -89,9 +84,6 @@ namespace Assets.Scripts
             // Handle shooting
             ShootingManagement();
 
-            // Handle apply card effects
-            ApplyEffectManagement();
-
             // Move the character controller
             characterController.Move(velocity * Time.deltaTime);
         }
@@ -99,14 +91,8 @@ namespace Assets.Scripts
         // Handle walking, strafing, and running movement
         private void MovementAndRunningManagement()
         {
-            // Update slow effect status
-            UpdateSlowEffect();
-
             // Calculate movement speed (walk or run)
             float currentSpeed = runInput ? runSpeed : walkSpeed;
-
-            // Apply speed multiplier (for slow effect)
-            currentSpeed *= speedMultiplier;
 
             // W/S for forward/backward, A/D for left/right strafing
             Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
@@ -182,35 +168,6 @@ namespace Assets.Scripts
             }
         }
 
-        // Handle player apply effect
-        private void ApplyEffectManagement()
-        {
-            if (Input.GetMouseButtonDown(1))
-            {
-                CardData currentCard = player.GetCurrentCard();
-                if (currentCard != null)
-                {
-                    switch (currentCard.effectType)
-                    {
-                        case EffectType.Heal:
-                            ApplyHealingEffect(currentCard);
-                            break;
-                        case EffectType.Dash:
-                            ApplyDashingEffect(currentCard);
-                            break;
-                        case EffectType.Slow:
-                            ApplySlowEffect(currentCard);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    // Clear the card after using it
-                    player.ClearCurrentCard();
-                }
-            }
-        }
-
         // Handle player input
         private void InputManagement()
         {
@@ -239,74 +196,6 @@ namespace Assets.Scripts
 
             // Left Shift for running
             runInput = Input.GetKey(KeyCode.LeftShift);
-        }
-
-        // Apply healing effect from card
-        private void ApplyHealingEffect(CardData card)
-        {
-            if (card != null)
-            {
-                player.Heal((int)card.value);
-                Debug.Log($"Applied {card.cardName}: Healed {card.value} HP");
-            }
-        }
-
-        // Apply dash effect - instant forward movement
-        private void ApplyDashingEffect(CardData card)
-        {
-            if (card != null)
-            {
-                // Get the forward direction (camera forward for better control)
-                Camera mainCamera = Camera.main;
-                Vector3 dashDirection;
-
-                if (mainCamera != null)
-                {
-                    // Use camera forward direction but keep it horizontal
-                    dashDirection = mainCamera.transform.forward;
-                    dashDirection.y = 0; // Keep dash horizontal
-                    dashDirection.Normalize();
-                }
-                else
-                {
-                    // Fallback to player forward direction
-                    dashDirection = transform.forward;
-                }
-
-                // Calculate dash distance
-                float dashDistance = card.value;
-
-                // Move the character controller instantly
-                characterController.Move(dashDirection * dashDistance);
-
-                Debug.Log($"Applied {card.cardName}: Dashed {card.value} units forward");
-            }
-        }
-
-        // Apply slow effect - reduce speed to 50% for duration
-        private void ApplySlowEffect(CardData card)
-        {
-            if (card != null)
-            {
-                // Apply slow effect
-                isSlowed = true;
-                speedMultiplier = 0.5f; // 50% speed
-                slowEndTime = Time.time + card.value; // Duration in seconds
-
-                Debug.Log($"Applied {card.cardName}: Speed reduced to 50% for {card.value} seconds");
-            }
-        }
-
-        // Update slow effect timer
-        private void UpdateSlowEffect()
-        {
-            if (isSlowed && Time.time >= slowEndTime)
-            {
-                // Slow effect has ended, restore normal speed
-                isSlowed = false;
-                speedMultiplier = 1f;
-                Debug.Log("Slow effect ended - speed restored to normal");
-            }
         }
     }
 }
