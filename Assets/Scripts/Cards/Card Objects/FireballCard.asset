@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8c528c3a60060e368c5449a62d3c865, type: 3}
-  m_Name: HigherJumpCard
+  m_Name: FireballCard
   m_EditorClassIdentifier: 
-  index: 1
-  cardName: Higher Jump
-  description: Gives 2x jump height
-  duration: 10
-  effect: {fileID: 11400000, guid: 31e7cfe8b86cc5d4da89f32bf49b5bbb, type: 2}
+  index: 2
+  cardName: Fireball
+  description: Shoots a fireball
+  duration: 0
+  effect: {fileID: 11400000, guid: 506e9ec8a923ba14eaec1bc7b65347f7, type: 2}

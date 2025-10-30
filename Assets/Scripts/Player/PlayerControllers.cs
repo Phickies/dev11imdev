@@ -27,6 +27,10 @@ namespace Assets.Scripts
         private readonly float offsetAim = 0.8f;
         private readonly float offsetShoot = 1.0f;
 
+        [Header("Slam Settings")]
+        [SerializeField] private float slamSpeed = -40f; // How fast you slam down
+
+
         [Header("Input")]
         private float horizontalInput;
         private float verticalInput;
@@ -167,6 +171,44 @@ namespace Assets.Scripts
                 }
             }
         }
+        public void Shoot()
+        {
+            // Get camera direction for aiming
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null) return;
+
+            Vector3 shootDirection = mainCamera.transform.forward;
+
+            // Spawn bullet at right hand position, moved forward to avoid body
+            Vector3 spawnPosition = mainCamera.transform.position + mainCamera.transform.right * offsetAim + shootDirection * offsetShoot;
+            GameObject bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.LookRotation(shootDirection));
+
+            // Add velocity to bullet in camera direction
+            if (bullet.TryGetComponent<Rigidbody>(out var bulletRb))
+            {
+                // Configure Rigidbody for smooth physics with minimal performance cost
+                bulletRb.interpolation = RigidbodyInterpolation.Interpolate;
+                bulletRb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+                // Set velocity in camera direction
+                bulletRb.linearVelocity = shootDirection * bulletSpeed;
+
+                // Ignore collision with player to prevent immediate hits
+                if (TryGetComponent<Collider>(out var playerCollider))
+                {
+                    if (bullet.TryGetComponent<Collider>(out var bulletCollider))
+                    {
+                        Physics.IgnoreCollision(playerCollider, bulletCollider);
+                    }
+                }
+            }
+        }
+        public void Slam()
+        {
+            velocity.x = 0f;
+            velocity.z = 0f;
+            velocity.y = slamSpeed;
+        }
 
         // Handle player input
         private void InputManagement()
@@ -197,5 +239,7 @@ namespace Assets.Scripts
             // Left Shift for running
             runInput = Input.GetKey(KeyCode.LeftShift);
         }
+
+
     }
 }

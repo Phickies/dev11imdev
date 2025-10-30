@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: DoubleSpeedCard
   m_EditorClassIdentifier: 
   index: 0
-  cardName: 
-  description: 
+  cardName: Double Speed
+  description: Gives 2x Speed
+  duration: 10
   effect: {fileID: 11400000, guid: 4fef631302e6644409a1fa9c1d5b118b, type: 2}
