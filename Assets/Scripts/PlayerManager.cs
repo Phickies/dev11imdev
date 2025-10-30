@@ -6,7 +6,8 @@ public enum EffectType
     None,
     Heal,
     Dash,
-    Slow
+    Slow,
+    JumpBoost
 }
 
 [RequireComponent(typeof(CharacterController))]
@@ -24,7 +25,13 @@ public class PlayerManager : MonoBehaviour
     private EffectType currentEffect;
 
     [Header("Card Management")]
-    private CardData currentCard; // The current card the player is holding
+    private CardData[] cardHand = new CardData[5];
+    private int selectedCardIndex = -1;
+
+    [Header("Debug Settings")]
+    [SerializeField] private bool enableDebugLogs = false;
+    [SerializeField] public bool invincible = false;
+    [SerializeField] public bool infiniteDash = false;
 
     // Fall tracking variables
     private bool isFalling = false;
@@ -33,22 +40,35 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        // Initialize health
         currentHealth = maxHealth;
 
-        // Get CharacterController if not assigned
         if (characterController == null)
         {
             characterController = GetComponent<CharacterController>();
         }
 
-        // Initialize highest point
         highestPoint = transform.position.y;
+
+        // Give dash card if infinite dash is enabled
+        if (infiniteDash)
+        {
+            GiveTestDashCard();
+        }
     }
 
     void Update()
     {
         CheckFallDamage();
+
+        // Ensure player always has dash card if infinite dash is enabled
+        if (infiniteDash)
+        {
+            CardData selectedCard = GetCard(selectedCardIndex);
+            if (selectedCard == null || selectedCard.effectType != EffectType.Dash)
+            {
+                GiveTestDashCard();
+            }
+        }
     }
 
     // Check for fall damage
@@ -100,8 +120,23 @@ public class PlayerManager : MonoBehaviour
     // Apply damage to the player
     public void TakeDamage(int damage)
     {
+        // If invincible, ignore all damage
+        if (invincible)
+        {
+            if (enableDebugLogs)
+            {
+                Debug.Log($"Invincible mode: Blocked {damage} damage");
+            }
+            return;
+        }
+
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        if (enableDebugLogs)
+        {
+            Debug.Log($"Took {damage} damage. Current health: {currentHealth}/{maxHealth}");
+        }
 
         if (currentHealth <= 0)
         {
@@ -148,30 +183,77 @@ public class PlayerManager : MonoBehaviour
         return isDead;
     }
 
-    // Set the current card (called when player picks up a card)
-    public void SetCurrentCard(CardData card)
+    // Check if infinite dash is enabled
+    public bool HasInfiniteDash()
     {
-        currentCard = card;
-        if (card != null)
+        return infiniteDash;
+    }
+
+    // Check if invincible is enabled
+    public bool IsInvincible()
+    {
+        return invincible;
+    }
+
+    // Simple card storage accessors - only for Cards.cs to use
+    public CardData GetCard(int index)
+    {
+        return (index >= 0 && index < cardHand.Length) ? cardHand[index] : null;
+    }
+
+    public void SetCard(int index, CardData card)
+    {
+        if (index >= 0 && index < cardHand.Length)
         {
-            currentEffect = card.effectType;
-        }
-        else
-        {
-            currentEffect = EffectType.None;
+            cardHand[index] = card;
         }
     }
 
-    // Get the current card
-    public CardData GetCurrentCard()
+    public int GetSelectedIndex()
     {
-        return currentCard;
+        return selectedCardIndex;
     }
 
-    // Clear the current card (after using it)
-    public void ClearCurrentCard()
+    public void SetSelectedIndex(int index)
     {
-        currentCard = null;
-        currentEffect = EffectType.None;
+        selectedCardIndex = (index >= 0 && index < cardHand.Length) ? index : -1;
+
+        CardData selectedCard = selectedCardIndex >= 0 ? cardHand[selectedCardIndex] : null;
+        currentEffect = selectedCard != null ? selectedCard.effectType : EffectType.None;
+    }
+
+    public void ClearCard(int index)
+    {
+        if (index >= 0 && index < cardHand.Length)
+        {
+            cardHand[index] = null;
+        }
+    }
+
+    // Check if a card should be kept (for infinite effects)
+    public bool ShouldKeepCard(CardData card)
+    {
+        if (card == null) return false;
+
+        return card.effectType switch
+        {
+            EffectType.Dash => infiniteDash,
+            // Add more infinite effect types here as needed
+            _ => false
+        };
+    }
+
+    // Gives player a dash card for testing
+    private void GiveTestDashCard()
+    {
+        CardData dashCard = new()
+        {
+            cardName = "Dash Card",
+            effectType = EffectType.Dash,
+            value = 10f
+        };
+
+        SetCard(0, dashCard);
+        SetSelectedIndex(0);
     }
 }
