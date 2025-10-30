@@ -4,7 +4,7 @@ namespace Assets.Scripts
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerManager))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerControllers : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private GameManager gameManager;
