@@ -6,6 +6,8 @@ public class CardManager : MonoBehaviour
 {
     public List<Card> availableCards = new List<Card>();
     public PlayerController controller;
+    public CardUIManager cardUIManager;
+
     void Start()
     {
         
@@ -23,6 +25,7 @@ public class CardManager : MonoBehaviour
         if(card.effect != null)
         {
             card.effect.ApplyEffect(controller);
+            cardUIManager.AddCardToUI(card);
         }
         Debug.Log("Picked up " + card.name);
     }
