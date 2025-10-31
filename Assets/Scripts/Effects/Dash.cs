@@ -4,14 +4,14 @@ using Assets.Scripts;
 [CreateAssetMenu(menuName = "Card System/Effects/Dash")]
 public class Dash : Effect
 {
-    public PlayerController controller;
+    public PlayerControllers controller;
 
-    public override void ApplyEffect(PlayerController controller)
+    public override void ApplyEffect(PlayerControllers controller)
     {
         // controller.Dash();
     }
 
-    public override void RemoveEffect(PlayerController controller)
+    public override void RemoveEffect(PlayerControllers controller)
     {
         
     }

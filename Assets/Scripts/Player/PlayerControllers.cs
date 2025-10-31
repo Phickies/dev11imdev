@@ -8,7 +8,6 @@ namespace Assets.Scripts
     {
         [Header("References")]
         [SerializeField] private GameManager gameManager;
-        [SerializeField] private Cards cards;
         private CharacterController characterController;
 
         private PlayerManager player;
@@ -39,18 +38,6 @@ namespace Assets.Scripts
         private bool runInput;
 
         private Vector3 velocity;
-
-        [Header("Effect Settings")]
-        private bool isSlowed = false;
-        private float slowEndTime = 0f;
-        private float speedMultiplier = 1f; // Normal speed multiplier
-
-        // Dash effect variables
-        private bool isDashing = false;
-        private float dashEndTime = 0f;
-        private Vector3 dashDirection;
-        private float dashSpeed = 0f;
-        [SerializeField] private float dashDuration = 0.3f; // Duration of dash in seconds
 
         // Jump boost effect variables
         private bool hasJumpBoost = false;
@@ -144,7 +131,6 @@ namespace Assets.Scripts
                 // Apply horizontal movement (keep y velocity separate for jumping/gravity)
                 velocity.x = moveDirection.x;
                 velocity.z = moveDirection.z;
-            }
         }
 
         // Handle jumping movement
@@ -190,9 +176,7 @@ namespace Assets.Scripts
         private void InputManagement()
         {
             HandleMovementInput();
-            HandleCardSelection();
             HandleShootingInput();
-            HandleApplyEffect();
         }
 
         // Handle movement input (WASD)
@@ -226,31 +210,6 @@ namespace Assets.Scripts
         }
 
         // Handle card selection input (keys 1-5)
-        private void HandleCardSelection()
-        {
-            if (cards == null) return;
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                cards.SelectCardSlot(0, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                cards.SelectCardSlot(1, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                cards.SelectCardSlot(2, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                cards.SelectCardSlot(3, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                cards.SelectCardSlot(4, player);
-            }
-        }
 
         // Handle player shooting
         private void HandleShootingInput()
@@ -325,33 +284,6 @@ namespace Assets.Scripts
             velocity.x = 0f;
             velocity.z = 0f;
             velocity.y = slamSpeed;
-        }
-
-        // Handle player input
-        private void InputManagement()
-        {
-            // If both A and D are pressed, cancel out horizontal movement
-            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
-            {
-                horizontalInput = 0f;
-            }
-            else
-            {
-                horizontalInput = Input.GetAxis("Horizontal"); // A/D for strafing left/right
-            }
-
-            // If both W and S are pressed, cancel out vertical movement
-            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S))
-            {
-                verticalInput = 0f;
-            }
-        }
-
-            // Space for jumping
-            jumpInput = Input.GetButtonDown("Jump");
-
-            // Left Shift for running
-            runInput = Input.GetKey(KeyCode.LeftShift);
         }
 
 

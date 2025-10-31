@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class Effect : ScriptableObject
 {
-    public abstract void ApplyEffect(PlayerController controller);
+    public abstract void ApplyEffect(PlayerControllers controller);
 
-    public abstract void RemoveEffect(PlayerController stats);
+    public abstract void RemoveEffect(PlayerControllers stats);
 }

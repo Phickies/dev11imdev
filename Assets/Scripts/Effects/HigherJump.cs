@@ -6,12 +6,12 @@ public class HigherJump : Effect
 {
     public float jumpMultiplier = 2f;
 
-    public override void ApplyEffect(PlayerController controller)
+    public override void ApplyEffect(PlayerControllers controller)
     {
         controller.jumpHeight *= jumpMultiplier;
     }
 
-    public override void RemoveEffect(PlayerController controller)
+    public override void RemoveEffect(PlayerControllers controller)
     {
         //TODO: unsafe
         controller.jumpHeight /= jumpMultiplier;

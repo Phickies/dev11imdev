@@ -6,7 +6,7 @@ public class CardManager : MonoBehaviour
 {
     public List<Card> availableCards = new List<Card>();
     public List<ActiveCard> activeCards = new List<ActiveCard>(); // Cards that are currently activated
-    public PlayerController controller;
+    public PlayerControllers controller;
     public CardUIManager cardUIManager;
     public float cardCountdown = 10f;
     private int selectedIndex;
