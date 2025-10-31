@@ -4,10 +4,11 @@ namespace Assets.Scripts
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerManager))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerControllers : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private GameManager gameManager;
+        [SerializeField] private Cards cards;
         private CharacterController characterController;
 
         private PlayerManager player;
@@ -39,6 +40,22 @@ namespace Assets.Scripts
 
         private Vector3 velocity;
 
+        [Header("Effect Settings")]
+        private bool isSlowed = false;
+        private float slowEndTime = 0f;
+        private float speedMultiplier = 1f; // Normal speed multiplier
+
+        // Dash effect variables
+        private bool isDashing = false;
+        private float dashEndTime = 0f;
+        private Vector3 dashDirection;
+        private float dashSpeed = 0f;
+        [SerializeField] private float dashDuration = 0.3f; // Duration of dash in seconds
+
+        // Jump boost effect variables
+        private bool hasJumpBoost = false;
+        private float jumpBoostAmount = 0f;
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
         {
@@ -57,7 +74,33 @@ namespace Assets.Scripts
             // Initialize PlayerManager reference if not assigned
             if (player == null)
             {
-                player = GetComponent<PlayerManager>();
+                // Get all PlayerManager components on this GameObject
+                PlayerManager[] managers = GetComponents<PlayerManager>();
+
+                if (managers.Length > 1)
+                {
+                    Debug.LogWarning($"Found {managers.Length} PlayerManager components! Using the one with infiniteDash enabled.");
+
+                    // Find the one with infiniteDash enabled
+                    foreach (var mgr in managers)
+                    {
+                        if (mgr.infiniteDash)
+                        {
+                            player = mgr;
+                            break;
+                        }
+                    }
+
+                    // If none found with infiniteDash, use the first one
+                    if (player == null)
+                    {
+                        player = managers[0];
+                    }
+                }
+                else
+                {
+                    player = GetComponent<PlayerManager>();
+                }
             }
         }
 
@@ -85,9 +128,6 @@ namespace Assets.Scripts
             // Apply gravity
             GravityManagement();
 
-            // Handle shooting
-            ShootingManagement();
-
             // Move the character controller
             characterController.Move(velocity * Time.deltaTime);
         }
@@ -101,9 +141,10 @@ namespace Assets.Scripts
             // W/S for forward/backward, A/D for left/right strafing
             Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
 
-            // Apply horizontal movement (keep y velocity separate for jumping/gravity)
-            velocity.x = moveDirection.x;
-            velocity.z = moveDirection.z;
+                // Apply horizontal movement (keep y velocity separate for jumping/gravity)
+                velocity.x = moveDirection.x;
+                velocity.z = moveDirection.z;
+            }
         }
 
         // Handle jumping movement
@@ -111,8 +152,18 @@ namespace Assets.Scripts
         {
             if (jumpInput && characterController.isGrounded)
             {
+                // Calculate effective jump height with boost if active
+                float effectiveJumpHeight = jumpHeight + (hasJumpBoost ? jumpBoostAmount : 0f);
+
                 // Apply jump velocity using physics formula
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gameManager.GetGravity());
+                velocity.y = Mathf.Sqrt(effectiveJumpHeight * -2f * gameManager.GetGravity());
+
+                // Consume jump boost after one use
+                if (hasJumpBoost)
+                {
+                    hasJumpBoost = false;
+                    jumpBoostAmount = 0f;
+                }
             }
         }
 
@@ -135,8 +186,74 @@ namespace Assets.Scripts
             }
         }
 
+        // Handle player input
+        private void InputManagement()
+        {
+            HandleMovementInput();
+            HandleCardSelection();
+            HandleShootingInput();
+            HandleApplyEffect();
+        }
+
+        // Handle movement input (WASD)
+        private void HandleMovementInput()
+        {
+            // If both A and D are pressed, cancel out horizontal movement
+            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
+            {
+                horizontalInput = 0f;
+            }
+            else
+            {
+                horizontalInput = Input.GetAxis("Horizontal"); // A/D for strafing left/right
+            }
+
+            // If both W and S are pressed, cancel out vertical movement
+            if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S))
+            {
+                verticalInput = 0f;
+            }
+            else
+            {
+                verticalInput = Input.GetAxis("Vertical"); // W/S for forward/backward
+            }
+
+            // Space for jumping
+            jumpInput = Input.GetButtonDown("Jump");
+
+            // Left Shift for running
+            runInput = Input.GetKey(KeyCode.LeftShift);
+        }
+
+        // Handle card selection input (keys 1-5)
+        private void HandleCardSelection()
+        {
+            if (cards == null) return;
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                cards.SelectCardSlot(0, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                cards.SelectCardSlot(1, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                cards.SelectCardSlot(2, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                cards.SelectCardSlot(3, player);
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                cards.SelectCardSlot(4, player);
+            }
+        }
+
         // Handle player shooting
-        private void ShootingManagement()
+        private void HandleShootingInput()
         {
             if (Input.GetMouseButtonDown(0) && bulletPrefab != null)
             {
@@ -228,10 +345,7 @@ namespace Assets.Scripts
             {
                 verticalInput = 0f;
             }
-            else
-            {
-                verticalInput = Input.GetAxis("Vertical"); // W/S for forward/backward
-            }
+        }
 
             // Space for jumping
             jumpInput = Input.GetButtonDown("Jump");
