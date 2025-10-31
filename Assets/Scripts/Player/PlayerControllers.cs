@@ -8,7 +8,6 @@ namespace Assets.Scripts
     {
         [Header("References")]
         [SerializeField] private GameManager gameManager;
-        [SerializeField] private Cards cards;
         private CharacterController characterController;
 
         private PlayerManager player;
@@ -18,15 +17,19 @@ namespace Assets.Scripts
         private readonly float airDrag = 0.1f; // Resistance when falling
 
         [Header("Movement Settings")]
-        [SerializeField] private float walkSpeed = 5f;
-        [SerializeField] private float runSpeed = 10f;
-        [SerializeField] private float jumpHeight = 3.5f;
+        [SerializeField] public float walkSpeed = 5f;
+        [SerializeField] public float runSpeed = 10f;
+        [SerializeField] public float jumpHeight = 3.5f;
 
         [Header("Shooting Settings")]
         [SerializeField] private GameObject bulletPrefab;
         [SerializeField] private float bulletSpeed = 20f;
         private readonly float offsetAim = 0.8f;
         private readonly float offsetShoot = 1.0f;
+
+        [Header("Slam Settings")]
+        [SerializeField] private float slamSpeed = -40f; // How fast you slam down
+
 
         [Header("Input")]
         private float horizontalInput;
@@ -35,18 +38,6 @@ namespace Assets.Scripts
         private bool runInput;
 
         private Vector3 velocity;
-
-        [Header("Effect Settings")]
-        private bool isSlowed = false;
-        private float slowEndTime = 0f;
-        private float speedMultiplier = 1f; // Normal speed multiplier
-
-        // Dash effect variables
-        private bool isDashing = false;
-        private float dashEndTime = 0f;
-        private Vector3 dashDirection;
-        private float dashSpeed = 0f;
-        [SerializeField] private float dashDuration = 0.3f; // Duration of dash in seconds
 
         // Jump boost effect variables
         private bool hasJumpBoost = false;
@@ -65,12 +56,6 @@ namespace Assets.Scripts
             if (gameManager == null)
             {
                 gameManager = FindFirstObjectByType<GameManager>();
-            }
-
-            // Find Cards in the scene if not assigned
-            if (cards == null)
-            {
-                cards = FindFirstObjectByType<Cards>();
             }
 
             // Initialize PlayerManager reference if not assigned
@@ -137,33 +122,15 @@ namespace Assets.Scripts
         // Handle walking, strafing, and running movement
         private void MovementAndRunningManagement()
         {
-            // Update slow effect status
-            UpdateSlowEffect();
+            // Calculate movement speed (walk or run)
+            float currentSpeed = runInput ? runSpeed : walkSpeed;
 
-            // Update dash effect status
-            UpdateDashEffect();
-
-            // If dashing, override normal movement
-            if (isDashing)
-            {
-                velocity.x = dashDirection.x * dashSpeed;
-                velocity.z = dashDirection.z * dashSpeed;
-            }
-            else
-            {
-                // Calculate movement speed (walk or run)
-                float currentSpeed = runInput ? runSpeed : walkSpeed;
-
-                // Apply speed multiplier (for slow effect)
-                currentSpeed *= speedMultiplier;
-
-                // W/S for forward/backward, A/D for left/right strafing
-                Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
+            // W/S for forward/backward, A/D for left/right strafing
+            Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
 
                 // Apply horizontal movement (keep y velocity separate for jumping/gravity)
                 velocity.x = moveDirection.x;
                 velocity.z = moveDirection.z;
-            }
         }
 
         // Handle jumping movement
@@ -209,9 +176,7 @@ namespace Assets.Scripts
         private void InputManagement()
         {
             HandleMovementInput();
-            HandleCardSelection();
             HandleShootingInput();
-            HandleApplyEffect();
         }
 
         // Handle movement input (WASD)
@@ -245,31 +210,6 @@ namespace Assets.Scripts
         }
 
         // Handle card selection input (keys 1-5)
-        private void HandleCardSelection()
-        {
-            if (cards == null) return;
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                cards.SelectCardSlot(0, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                cards.SelectCardSlot(1, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                cards.SelectCardSlot(2, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                cards.SelectCardSlot(3, player);
-            }
-            else if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                cards.SelectCardSlot(4, player);
-            }
-        }
 
         // Handle player shooting
         private void HandleShootingInput()
@@ -307,130 +247,45 @@ namespace Assets.Scripts
                 }
             }
         }
-
-        // Handle player apply effect
-        private void HandleApplyEffect()
+        public void Shoot()
         {
-            if (Input.GetMouseButtonDown(1))
+            // Get camera direction for aiming
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null) return;
+
+            Vector3 shootDirection = mainCamera.transform.forward;
+
+            // Spawn bullet at right hand position, moved forward to avoid body
+            Vector3 spawnPosition = mainCamera.transform.position + mainCamera.transform.right * offsetAim + shootDirection * offsetShoot;
+            GameObject bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.LookRotation(shootDirection));
+
+            // Add velocity to bullet in camera direction
+            if (bullet.TryGetComponent<Rigidbody>(out var bulletRb))
             {
-                if (cards == null) return;
+                // Configure Rigidbody for smooth physics with minimal performance cost
+                bulletRb.interpolation = RigidbodyInterpolation.Interpolate;
+                bulletRb.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
-                // Get the currently selected card from hand
-                CardData selectedCard = cards.GetSelectedCard(player);
+                // Set velocity in camera direction
+                bulletRb.linearVelocity = shootDirection * bulletSpeed;
 
-                if (selectedCard != null)
+                // Ignore collision with player to prevent immediate hits
+                if (TryGetComponent<Collider>(out var playerCollider))
                 {
-                    switch (selectedCard.effectType)
+                    if (bullet.TryGetComponent<Collider>(out var bulletCollider))
                     {
-                        case EffectType.Heal:
-                            ApplyHealingEffect(selectedCard);
-                            break;
-                        case EffectType.Dash:
-                            ApplyDashingEffect(selectedCard);
-                            break;
-                        case EffectType.Slow:
-                            ApplySlowEffect(selectedCard);
-                            break;
-                        case EffectType.JumpBoost:
-                            ApplyJumpBoostEffect(selectedCard);
-                            break;
+                        Physics.IgnoreCollision(playerCollider, bulletCollider);
                     }
-
-                    // Clear the selected card after using it (respects infinite effects)
-                    cards.ClearSelectedCard(player);
-                }
-                else
-                {
-                    Debug.Log("No card selected! Press 1-5 to select a card first.");
                 }
             }
         }
-
-        // Apply healing effect from card
-        private void ApplyHealingEffect(CardData card)
+        public void Slam()
         {
-            if (card != null)
-            {
-                player.Heal((int)card.value);
-                Debug.Log($"Applied {card.cardName}: Healed {card.value} HP");
-            }
+            velocity.x = 0f;
+            velocity.z = 0f;
+            velocity.y = slamSpeed;
         }
 
-        // Apply dash effect - fast forward movement
-        private void ApplyDashingEffect(CardData card)
-        {
-            if (card != null)
-            {
-                // Get the forward direction (camera forward for better control)
-                Camera mainCamera = Camera.main;
 
-                if (mainCamera != null)
-                {
-                    // Use camera forward direction but keep it horizontal
-                    dashDirection = mainCamera.transform.forward;
-                    dashDirection.y = 0; // Keep dash horizontal
-                    dashDirection.Normalize();
-                }
-                else
-                {
-                    // Fallback to player forward direction
-                    dashDirection = transform.forward;
-                }
-
-                // Calculate dash speed needed to cover the distance in dashDuration
-                float dashDistance = card.value;
-                dashSpeed = dashDistance / dashDuration;
-
-                // Start dashing
-                isDashing = true;
-                dashEndTime = Time.time + dashDuration;
-            }
-        }
-
-        // Update dash effect timer
-        private void UpdateDashEffect()
-        {
-            if (isDashing && Time.time >= dashEndTime)
-            {
-                isDashing = false;
-                dashSpeed = 0f;
-            }
-        }
-
-        // Apply slow effect - reduce speed to 50% for duration
-        private void ApplySlowEffect(CardData card)
-        {
-            if (card != null)
-            {
-                // Apply slow effect
-                isSlowed = true;
-                speedMultiplier = 0.5f; // 50% speed
-                slowEndTime = Time.time + card.value; // Duration in seconds
-
-                Debug.Log($"Applied {card.cardName}: Speed reduced to 50% for {card.value} seconds");
-            }
-        }
-
-        // Update slow effect timer
-        private void UpdateSlowEffect()
-        {
-            if (isSlowed && Time.time >= slowEndTime)
-            {
-                // Slow effect has ended, restore normal speed
-                isSlowed = false;
-                speedMultiplier = 1f;
-                Debug.Log("Slow effect ended - speed restored to normal");
-            }
-        }
-
-        // Apply jump boost effect - increases jump height for one jump only
-        private void ApplyJumpBoostEffect(CardData card)
-        {
-            if (card != null)
-            {
-                hasJumpBoost = true;
-                jumpBoostAmount = card.value;
-            }
-        }
     }
 }
