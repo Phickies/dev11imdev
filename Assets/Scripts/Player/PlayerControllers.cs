@@ -286,6 +286,16 @@ namespace Assets.Scripts
             velocity.y = slamSpeed;
         }
 
+        public void WarpTo(Vector3 newPosition)
+        {
+            if (characterController == null)
+                characterController = GetComponent<CharacterController>();
 
+            characterController.enabled = false;
+            transform.position = newPosition;
+            characterController.enabled = true;
+
+            velocity = Vector3.zero; // reset gravity 
+        }
     }
 }

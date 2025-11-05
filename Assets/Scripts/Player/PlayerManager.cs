@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using UnityEngine;
 
 // Effect types that can be applied to the player
@@ -181,4 +182,52 @@ public class PlayerManager : MonoBehaviour
         return invincible;
     }
 
+    public void warpTo(Vector3 position)
+    {
+        PlayerControllers controller = GetComponent<PlayerControllers>();
+        if (controller != null)
+        {
+            controller.WarpTo(position); // delegate to movement script
+        }
+        else
+        {
+            // fallback if no contrller attached
+            transform.position = position;
+        }
+
+        // Reset fall-related state so the player doesn't take damage on load
+        isFalling = false;
+        highestPoint = position.y;
+
+
+    }
+
+    #region save and load
+
+    public void Save(ref PlayerData data)
+    {
+        data.Position = transform.position;
+        data.currentEff = GetCurrentEffect();
+        data.currentHeath = currentHealth;
+
+        Debug.Log("saved position: " + data.Position);
+    }
+
+    public void Load(PlayerData data)
+    {
+        transform.position = data.Position;
+        warpTo(data.Position);
+        currentEffect = data.currentEff;
+        currentHealth = data.currentHeath;
+        Debug.Log("new position: " + data.Position);
+    }
+    #endregion
+
+}
+[System.Serializable]
+public struct PlayerData
+{
+    public Vector3 Position;
+    public int currentHeath;
+    public EffectType currentEff;
 }

@@ -21,6 +21,8 @@ namespace Assets.Scripts
         private float targetXRotation = 0f;
         private float targetYRotation = 0f;
 
+        public GameObject pauseMenuManager;
+
         private void Start()
         {
             // Lock and hide cursor for FPS experience
@@ -40,6 +42,14 @@ namespace Assets.Scripts
 #pragma warning disable S2325
         private void Update()
         {
+            if (pauseMenuManager != null)
+            {
+                PauseMenu manager = pauseMenuManager.GetComponent<PauseMenu>();
+                if (manager.isPaused)
+                {
+                    return;
+                }
+            }
             // Handle cursor lock/unlock in Update (input detection)
             if (Input.GetKeyDown(KeyCode.Escape))
             {
