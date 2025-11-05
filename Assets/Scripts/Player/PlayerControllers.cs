@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts
 {
@@ -123,7 +123,9 @@ namespace Assets.Scripts
         private void MovementAndRunningManagement()
         {
             // Calculate movement speed (walk or run)
-            float currentSpeed = runInput ? runSpeed : walkSpeed;
+            float currentSpeed;
+            if(runInput) currentSpeed = runSpeed;
+            else currentSpeed = walkSpeed;
 
             // W/S for forward/backward, A/D for left/right strafing
             Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
@@ -189,7 +191,7 @@ namespace Assets.Scripts
             }
             else
             {
-                horizontalInput = Input.GetAxis("Horizontal"); // A/D for strafing left/right
+                horizontalInput = Input.GetAxisRaw("Horizontal"); // A/D for strafing left/right
             }
 
             // If both W and S are pressed, cancel out vertical movement
@@ -199,7 +201,7 @@ namespace Assets.Scripts
             }
             else
             {
-                verticalInput = Input.GetAxis("Vertical"); // W/S for forward/backward
+                verticalInput = Input.GetAxisRaw("Vertical"); // W/S for forward/backward
             }
 
             // Space for jumping
