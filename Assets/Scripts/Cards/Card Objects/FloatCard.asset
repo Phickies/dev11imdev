@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8c528c3a60060e368c5449a62d3c865, type: 3}
-  m_Name: SlamCard
+  m_Name: FloatCard
   m_EditorClassIdentifier: 
-  index: 3
-  cardName: Slam
-  description: Slams you (duh)
-  duration: 0
-  effect: {fileID: 11400000, guid: 43740b899469d944d9fb20b53f8ab581, type: 2}
+  index: 6
+  cardName: Float
+  description: Reduced gravity
+  duration: 10
+  effect: {fileID: 11400000, guid: e95e4ba5aba95ff4c8f96be5f74e452a, type: 2}

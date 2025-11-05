@@ -104,5 +104,10 @@ namespace Assets.Scripts
         {
             gravity = value;
         }
+        
+        public void ResetGravity()
+        {
+            gravity = normalGravity;
+        }
     }
 }

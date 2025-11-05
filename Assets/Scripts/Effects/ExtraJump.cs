@@ -1,18 +1,18 @@
 using UnityEngine;
 using Assets.Scripts;
+using System.Runtime.Serialization;
 
-[CreateAssetMenu(menuName = "Card System/Effects/Dash")]
-public class Dash : Effect
+[CreateAssetMenu(menuName = "Card System/Effects/Extra Jump")]
+public class ExtraJump : Effect
 {
-    public PlayerControllers controller;
 
     public override void ApplyEffect(PlayerControllers controller)
     {
-        controller.Dash();
+        controller.ForceJump();
     }
 
     public override void RemoveEffect(PlayerControllers controller)
     {
-        
+
     }
 }

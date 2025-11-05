@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8c528c3a60060e368c5449a62d3c865, type: 3}
-  m_Name: SlamCard
+  m_Script: {fileID: 11500000, guid: 2b75c17b8b1d9a745857f6e44e1b222e, type: 3}
+  m_Name: FloatEffect
   m_EditorClassIdentifier: 
-  index: 3
-  cardName: Slam
-  description: Slams you (duh)
-  duration: 0
-  effect: {fileID: 11400000, guid: 43740b899469d944d9fb20b53f8ab581, type: 2}
+  manager: {fileID: 0}
+  floatGravity: -10

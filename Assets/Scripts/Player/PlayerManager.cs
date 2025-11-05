@@ -28,7 +28,6 @@ public class PlayerManager : MonoBehaviour
     [Header("Debug Settings")]
     [SerializeField] private bool enableDebugLogs = false;
     [SerializeField] public bool invincible = false;
-    [SerializeField] public bool infiniteDash = false;
 
     // Fall tracking variables
     private bool isFalling = false;
@@ -46,11 +45,6 @@ public class PlayerManager : MonoBehaviour
 
         highestPoint = transform.position.y;
 
-        // Give dash card if infinite dash is enabled
-        if (infiniteDash)
-        {
-            //TODO: implement
-        }
     }
 
     void Update()
@@ -170,11 +164,6 @@ public class PlayerManager : MonoBehaviour
         return isDead;
     }
 
-    // Check if infinite dash is enabled
-    public bool HasInfiniteDash()
-    {
-        return infiniteDash;
-    }
 
     // Check if invincible is enabled
     public bool IsInvincible()
