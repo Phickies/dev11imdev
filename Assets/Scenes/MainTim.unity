@@ -316,7 +316,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6427cd68d71c8f5468ed75048a4239c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardToGive: {fileID: 11400000, guid: bd67950e1a0b878479969bf1df9e9c39, type: 2}
+  cardToGive: {fileID: 11400000, guid: a5d10c366686b1a498e4158a962077ee, type: 2}
 --- !u!135 &18709917
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1120,7 +1120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6427cd68d71c8f5468ed75048a4239c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardToGive: {fileID: 11400000, guid: 385576036bd944f44be9382a3f67e075, type: 2}
+  cardToGive: {fileID: 11400000, guid: 5561c5584f67a5a4c8b382d2d193609f, type: 2}
 --- !u!135 &80514886
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1254,6 +1254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00f2aeddcdc064cbbb88685155f49ad2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  normalGravity: -30.24
   gravity: -30.24
 --- !u!1 &247221394
 GameObject:
@@ -18416,7 +18417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6427cd68d71c8f5468ed75048a4239c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardToGive: {fileID: 11400000, guid: ca4c6933aa0928a4d89d86fe33cf0527, type: 2}
+  cardToGive: {fileID: 11400000, guid: a5d10c366686b1a498e4158a962077ee, type: 2}
 --- !u!135 &1370699759
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -19296,7 +19297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6427cd68d71c8f5468ed75048a4239c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardToGive: {fileID: 11400000, guid: f48ca3a2b01544a4aaaf21b3d2dcb0c4, type: 2}
+  cardToGive: {fileID: 11400000, guid: 5561c5584f67a5a4c8b382d2d193609f, type: 2}
 --- !u!135 &1727896865
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -19461,11 +19462,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 240686582}
-  characterController: {fileID: 1756787098}
-  player: {fileID: 1756787101}
   walkSpeed: 14
   jumpHeight: 2
-  airControl: 6
+  airControl: 3
+  bulletPrefab: {fileID: 8294167727389061353, guid: b54b485b180104625b910bd770d2d01a, type: 3}
+  bulletSpeed: 20
+  offsetAim: 0.8
+  offsetShoot: 1
+  dashSpeed: 100
+  dashDuration: 5
 --- !u!114 &1756787101
 MonoBehaviour:
   m_ObjectHideFlags: 0
