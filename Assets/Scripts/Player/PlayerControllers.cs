@@ -7,88 +7,42 @@ namespace Assets.Scripts
     public class PlayerControllers : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private GameManager gameManager;
-        private CharacterController characterController;
+        public GameManager gameManager;
+        public CharacterController characterController;
 
-        private PlayerManager player;
+        public PlayerManager player;
 
         [Header("Player Attribute Settings")]
-        private readonly float playerMass = 70f; // Player weight in kg
-        private readonly float airDrag = 0.1f; // Resistance when falling
+        private float playerMass = 70f; // Player weight in kg
+        private float airDrag = 0.1f; // Resistance when falling
 
         [Header("Movement Settings")]
-        [SerializeField] public float walkSpeed = 5f;
-        [SerializeField] public float runSpeed = 10f;
-        [SerializeField] public float jumpHeight = 3.5f;
+        public float walkSpeed = 5f;
+        public float jumpHeight = 3.5f;
 
         [Header("Shooting Settings")]
-        [SerializeField] private GameObject bulletPrefab;
-        [SerializeField] private float bulletSpeed = 20f;
-        private readonly float offsetAim = 0.8f;
-        private readonly float offsetShoot = 1.0f;
+        public GameObject bulletPrefab;
+        public float bulletSpeed = 20f;
+        public float offsetAim = 0.8f;
+        public float offsetShoot = 1.0f;
 
         [Header("Slam Settings")]
-        [SerializeField] private float slamSpeed = -40f; // How fast you slam down
+        private float slamSpeed = -40f; // How fast you slam down
+
+        public float airControl = 6f;
 
 
         [Header("Input")]
         private float horizontalInput;
         private float verticalInput;
         private bool jumpInput;
-        private bool runInput;
 
         private Vector3 velocity;
-
-        // Jump boost effect variables
-        private bool hasJumpBoost = false;
-        private float jumpBoostAmount = 0f;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
         {
-            // Initialize character controller reference if not assigned
-            if (characterController == null)
-            {
-                characterController = GetComponent<CharacterController>();
-            }
-
-            // Find GameManager in the scene if not assigned
-            if (gameManager == null)
-            {
-                gameManager = FindFirstObjectByType<GameManager>();
-            }
-
-            // Initialize PlayerManager reference if not assigned
-            if (player == null)
-            {
-                // Get all PlayerManager components on this GameObject
-                PlayerManager[] managers = GetComponents<PlayerManager>();
-
-                if (managers.Length > 1)
-                {
-                    Debug.LogWarning($"Found {managers.Length} PlayerManager components! Using the one with infiniteDash enabled.");
-
-                    // Find the one with infiniteDash enabled
-                    foreach (var mgr in managers)
-                    {
-                        if (mgr.infiniteDash)
-                        {
-                            player = mgr;
-                            break;
-                        }
-                    }
-
-                    // If none found with infiniteDash, use the first one
-                    if (player == null)
-                    {
-                        player = managers[0];
-                    }
-                }
-                else
-                {
-                    player = GetComponent<PlayerManager>();
-                }
-            }
+           
         }
 
         // Update is called once per frame
@@ -99,7 +53,7 @@ namespace Assets.Scripts
                 // Disable player movement if dead
                 return;
             }
-            InputManagement();
+            HandleMovementInput();
             MovementManagement();
         }
 
@@ -122,38 +76,36 @@ namespace Assets.Scripts
         // Handle walking, strafing, and running movement
         private void MovementAndRunningManagement()
         {
-            // Calculate movement speed (walk or run)
-            float currentSpeed;
-            if(runInput) currentSpeed = runSpeed;
-            else currentSpeed = walkSpeed;
+            float currentSpeed = walkSpeed;
 
-            // W/S for forward/backward, A/D for left/right strafing
-            Vector3 moveDirection = (transform.forward * verticalInput + transform.right * horizontalInput).normalized * currentSpeed;
+            // Input in local space (camera-relative movement)
+            Vector3 inputDir = new Vector3(horizontalInput, 0f, verticalInput).normalized;
+            inputDir = transform.TransformDirection(inputDir);
 
-                // Apply horizontal movement (keep y velocity separate for jumping/gravity)
-                velocity.x = moveDirection.x;
-                velocity.z = moveDirection.z;
+            if (characterController.isGrounded)
+            {
+                // On ground: full control + velocity matches input
+                velocity.x = inputDir.x * currentSpeed;
+                velocity.z = inputDir.z * currentSpeed;
+            }
+            else
+            {
+                // In air: limited control
+                Vector3 targetVelocity = inputDir * currentSpeed;
+                velocity.x = Mathf.Lerp(velocity.x, targetVelocity.x, airControl * Time.deltaTime);
+                velocity.z = Mathf.Lerp(velocity.z, targetVelocity.z, airControl * Time.deltaTime);
+            }
         }
 
-        // Handle jumping movement
+
         private void JumpingManagement()
         {
             if (jumpInput && characterController.isGrounded)
             {
-                // Calculate effective jump height with boost if active
-                float effectiveJumpHeight = jumpHeight + (hasJumpBoost ? jumpBoostAmount : 0f);
-
-                // Apply jump velocity using physics formula
-                velocity.y = Mathf.Sqrt(effectiveJumpHeight * -2f * gameManager.GetGravity());
-
-                // Consume jump boost after one use
-                if (hasJumpBoost)
-                {
-                    hasJumpBoost = false;
-                    jumpBoostAmount = 0f;
-                }
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gameManager.GetGravity());
             }
         }
+
 
         // Handle gravity
         private void GravityManagement()
@@ -172,13 +124,6 @@ namespace Assets.Scripts
                 float dragEffect = airDrag / (playerMass / 70f);
                 velocity.y *= 1f - dragEffect * Time.deltaTime;
             }
-        }
-
-        // Handle player input
-        private void InputManagement()
-        {
-            HandleMovementInput();
-            HandleShootingInput();
         }
 
         // Handle movement input (WASD)
@@ -207,48 +152,9 @@ namespace Assets.Scripts
             // Space for jumping
             jumpInput = Input.GetButtonDown("Jump");
 
-            // Left Shift for running
-            runInput = Input.GetKey(KeyCode.LeftShift);
+            // Left Shift for slide
         }
 
-        // Handle card selection input (keys 1-5)
-
-        // Handle player shooting
-        private void HandleShootingInput()
-        {
-            if (Input.GetMouseButtonDown(0) && bulletPrefab != null)
-            {
-                // Get camera direction for aiming
-                Camera mainCamera = Camera.main;
-                if (mainCamera == null) return;
-
-                Vector3 shootDirection = mainCamera.transform.forward;
-
-                // Spawn bullet at right hand position, moved forward to avoid body
-                Vector3 spawnPosition = mainCamera.transform.position + mainCamera.transform.right * offsetAim + shootDirection * offsetShoot;
-                GameObject bullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.LookRotation(shootDirection));
-
-                // Add velocity to bullet in camera direction
-                if (bullet.TryGetComponent<Rigidbody>(out var bulletRb))
-                {
-                    // Configure Rigidbody for smooth physics with minimal performance cost
-                    bulletRb.interpolation = RigidbodyInterpolation.Interpolate;
-                    bulletRb.collisionDetectionMode = CollisionDetectionMode.Discrete;
-
-                    // Set velocity in camera direction
-                    bulletRb.linearVelocity = shootDirection * bulletSpeed;
-
-                    // Ignore collision with player to prevent immediate hits
-                    if (TryGetComponent<Collider>(out var playerCollider))
-                    {
-                        if (bullet.TryGetComponent<Collider>(out var bulletCollider))
-                        {
-                            Physics.IgnoreCollision(playerCollider, bulletCollider);
-                        }
-                    }
-                }
-            }
-        }
         public void Shoot()
         {
             // Get camera direction for aiming
