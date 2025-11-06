@@ -258,6 +258,7 @@ GameObject:
   - component: {fileID: 1510464857076363730}
   - component: {fileID: 2086481331048797359}
   - component: {fileID: 7064085049827747742}
+  - component: {fileID: 4141418070765847758}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -371,3 +372,21 @@ MonoBehaviour:
   controller: {fileID: 1510464857076363730}
   cardUIManager: {fileID: 0}
   cardCountdown: 10
+--- !u!114 &4141418070765847758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5949651291576297058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30e4893e00d5b495688ee7a82f90ce01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerManager: {fileID: 2086481331048797359}
+  startZoneVerticalOffset: 25
+  bossDefeatedTeleportPosition: {x: 0, y: 45, z: 0}
+  onPlayerWin:
+    m_PersistentCalls:
+      m_Calls: []
