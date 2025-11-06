@@ -317,6 +317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardToGive: {fileID: 11400000, guid: a5d10c366686b1a498e4158a962077ee, type: 2}
+  pickupSound: {fileID: 0}
 --- !u!135 &18709917
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1368,6 +1369,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardToGive: {fileID: 11400000, guid: 5561c5584f67a5a4c8b382d2d193609f, type: 2}
+  pickupSound: {fileID: 0}
 --- !u!135 &80514886
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -12284,27 +12286,9 @@ MonoBehaviour:
   enemyPrefab: {fileID: 3870423962803847078, guid: 89dcfb4b2e380f547a5a993272e98728, type: 3}
   spawnDelay: 3
   enemiesPerWave: 5
-  spawnPoints:
-  - {fileID: 568556431}
-  - {fileID: 2688008886531662528, guid: 44846b373439a954e82b7c625d914005, type: 3}
-  - {fileID: 209617743}
-  - {fileID: 394384063}
-  - {fileID: 1688356587}
-  - {fileID: 404348072}
-  - {fileID: 1998425912}
-  - {fileID: 1997572105}
-  - {fileID: 1110957585}
-  - {fileID: 664346182}
-  - {fileID: 2121260106}
-  - {fileID: 661801987}
-  - {fileID: 1400297402}
-  - {fileID: 251325108}
-  - {fileID: 1711794278}
-  - {fileID: 989450533}
-  enemytypes:
-  - {fileID: 3870423962803847078, guid: 89dcfb4b2e380f547a5a993272e98728, type: 3}
-  - {fileID: 8491531654668862071, guid: b2a2037105eedb048b0703987b956127, type: 3}
-  enemyParent: {fileID: 2112644839}
+  spawnPoints: []
+  enemytypes: []
+  enemyParent: {fileID: 0}
 --- !u!4 &568556431
 Transform:
   m_ObjectHideFlags: 0
@@ -21969,6 +21953,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardToGive: {fileID: 11400000, guid: 5561c5584f67a5a4c8b382d2d193609f, type: 2}
+  pickupSound: {fileID: 0}
 --- !u!135 &1727896865
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -22271,14 +22256,14 @@ MonoBehaviour:
   gameManager: {fileID: 240686582}
   walkSpeed: 14
   jumpHeight: 2
-  airControl: 3
+  airControl: 6
   bulletPrefab: {fileID: 8294167727389061353, guid: b54b485b180104625b910bd770d2d01a, type: 3}
   bulletSpeed: 20
   offsetAim: 0.8
   offsetShoot: 1
-  dashSpeed: 100
+  dashSpeed: 0
   dashDuration: 5
-  katanaPrefab: {fileID: 5131246974313494787, guid: 786f32070a0f142439ed88770151e2ae, type: 3}
+  katanaPrefab: {fileID: 0}
   katanaDamage: 30
 --- !u!114 &1756787101
 MonoBehaviour:
@@ -22298,9 +22283,12 @@ MonoBehaviour:
   enableDebugLogs: 0
   invincible: 0
   isDead: 0
-  damageImage: {fileID: 1248086509}
+  damageImage: {fileID: 0}
   damageDuration: 0
-  deathUI: {fileID: 351636205}
+  deathUI: {fileID: 0}
+  audioSource: {fileID: 0}
+  damageSound: {fileID: 0}
+  jumpSound: {fileID: 0}
 --- !u!114 &1756787102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38303,8 +38291,8 @@ MonoBehaviour:
   maxVerticalAngle: 90
   smoothCamera: 0
   smoothSpeed: 10
-  pauseMenuManager: {fileID: 1508389423}
-  playas: {fileID: 1756787095}
+  pauseMenuManager: {fileID: 0}
+  playas: {fileID: 0}
 --- !u!1001 &2088308986
 PrefabInstance:
   m_ObjectHideFlags: 0

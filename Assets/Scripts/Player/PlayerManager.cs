@@ -41,6 +41,9 @@ public class PlayerManager : MonoBehaviour
     public GameObject deathUI;
 
     private bool damaged;
+    public AudioSource audioSource;
+    public AudioClip damageSound;
+    public AudioClip jumpSound;
 
     void Start()
     {
@@ -52,6 +55,9 @@ public class PlayerManager : MonoBehaviour
         }
 
         highestPoint = transform.position.y;
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
 
     }
 
@@ -126,6 +132,7 @@ public class PlayerManager : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         FlashDamage();
+        PlayDamageSound();
 
         if (enableDebugLogs)
         {
@@ -219,7 +226,18 @@ public class PlayerManager : MonoBehaviour
         isFalling = false;
         highestPoint = position.y;
 
+    }
 
+    public void PlayDamageSound()
+    {
+        if (damageSound != null && audioSource != null)
+            audioSource.PlayOneShot(damageSound);
+    }
+
+    public void PlayJumpSound()
+    {
+        if (jumpSound != null && audioSource != null)
+            audioSource.PlayOneShot(jumpSound);
     }
 
     #region save and load
