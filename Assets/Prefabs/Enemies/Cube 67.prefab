@@ -147,12 +147,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 3007148640440880792}
   player: {fileID: 0}
-  sightRange: 8
+  sightRange: 13
   killDistance: 2
-  giveUpDistance: 10
+  giveUpDistance: 15
   giveUpSeconds: 5
-  patrolSpeed: 2
-  chaseSpeed: 5
+  patrolSpeed: 4
+  chaseSpeed: 13
   angularSpeed: 360
   walkPointRange: 10
   useLineOfSight: 0
