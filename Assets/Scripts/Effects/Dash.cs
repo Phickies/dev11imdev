@@ -8,7 +8,7 @@ public class Dash : Effect
 
     public override void ApplyEffect(PlayerControllers controller)
     {
-        // controller.Dash();
+        controller.Dash();
     }
 
     public override void RemoveEffect(PlayerControllers controller)
