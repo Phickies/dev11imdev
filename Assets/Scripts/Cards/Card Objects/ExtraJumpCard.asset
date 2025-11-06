@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8c528c3a60060e368c5449a62d3c865, type: 3}
   m_Name: ExtraJumpCard
   m_EditorClassIdentifier: 
-  index: 0
-  cardName: 
-  description: 
+  index: 7
+  cardName: Extra Jump
+  description: Gives a midair jump
   duration: 0
-  effect: {fileID: 0}
+  effect: {fileID: 11400000, guid: 105f492e2b45e564981b38b6ea01524c, type: 2}

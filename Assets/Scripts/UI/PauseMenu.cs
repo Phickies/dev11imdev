@@ -90,6 +90,12 @@ public class PauseMenu : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
     }
 
+    public void PlayAgain()
+    {
+        Time.timeScale = 1f;
+        isPaused = false;
+        SceneManager.LoadScene("MainTim");
+    }
     private void LockCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;

@@ -42,6 +42,10 @@ namespace Assets.Scripts
         private float verticalInput;
         private bool jumpInput;
 
+        [Header("Attack Settings")]
+        public GameObject katanaPrefab;
+        public float katanaDamage = 30f;
+
         private void Start()
         {
             controller = GetComponent<CharacterController>();
@@ -189,23 +193,26 @@ namespace Assets.Scripts
                 }
             }
         }
-        public void Slam()
-        {
-            velocity.x = 0f;
-            velocity.z = 0f;
-            velocity.y = slamSpeed;
-        }
 
+        public void UseKatana()
+        {
+            GameObject slash = Instantiate(katanaPrefab, transform.position + transform.forward * 1.2f, transform.rotation);
+            if (slash.TryGetComponent(out KatanaObject katana))
+            {
+                katana.Initialize(transform);
+            }
+        }
         public void WarpTo(Vector3 newPosition)
         {
-            if (characterController == null)
-                characterController = GetComponent<CharacterController>();
+            if (controller == null)
+                controller = GetComponent<CharacterController>();
 
-            characterController.enabled = false;
+            controller.enabled = false;
             transform.position = newPosition;
-            characterController.enabled = true;
+            controller.enabled = true;
 
-            velocity = Vector3.zero; // reset gravity 
+            baseVelocity = Vector3.zero; // reset gravity 
         }
+
     }
 }

@@ -28,8 +28,10 @@ namespace Assets.Scripts
         public PlayerManager playerManager;
         public ComboManager comboMan;
         public SpawnManager spawnManager;
+        public CardManager cardman;
 
         [Header("Gameplay Settings")]
+        public float normalGravity = -30.24f;
         [SerializeField] private float gravity = -30.24f;
 
 
@@ -40,13 +42,13 @@ namespace Assets.Scripts
                 instance = this;
                 DontDestroyOnLoad(gameObject);
             }
-            else if(instance != this)
+            else if (instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
-            if (playerManager == null )
+            if (playerManager == null)
             {
                 playerManager = Object.FindFirstObjectByType<PlayerManager>();
                 Debug.Log("found player");
@@ -71,6 +73,15 @@ namespace Assets.Scripts
                 if (spawnManager == null)
                 {
                     Debug.Log("no sapwn found");
+                }
+            }
+            if (cardman == null)
+            {
+                cardman = Object.FindFirstObjectByType<CardManager>();
+                Debug.Log("found card");
+                if (cardman == null)
+                {
+                    Debug.Log("no player found");
                 }
             }
         }

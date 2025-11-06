@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections;
-using NUnit.Framework;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using System.Threading;
+
+
 
 public class SpawnManager : MonoBehaviour
 {
@@ -11,20 +12,23 @@ public class SpawnManager : MonoBehaviour
     public GameObject enemyPrefab;
     public float spawnDelay = 3.0f;
     public int enemiesPerWave = 5;
+    public List<Transform> spawnPoints = new List<Transform>();
+    public GameObject[] enemytypes;
+    public Transform enemyParent;
 
     private Dictionary<GameObject, GameObject> _enemyToFab = new Dictionary<GameObject, GameObject>();
 
     private List<GameObject> _spawnedEnemies = new List<GameObject>();
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         _spawnedEnemies.RemoveAll(e => e == null);
-        //remove all destroyed enemies
+        //remove all destroyed enemies 
     }
 
     public void SpawnEnemy()
@@ -52,25 +56,47 @@ public class SpawnManager : MonoBehaviour
     private IEnumerator SpawnAfterDelay(int count)
     {
         yield return new WaitForSeconds(spawnDelay);
-        for (int i = 0; i < count; i++)
-        {
-            Vector3 spawnPos = transform.position + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
+        EnemySpawning();
+        ///*for (int i = 0; i < count; i++)
+        //{
+        //    Vector3 spawnPos = transform.position + new Vector3(Random.Range(-2f, 2f), 0, Random.Range(-2f, 2f));
 
-            GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-            _spawnedEnemies.Add(enemy);
-            _enemyToFab[enemy] = enemyPrefab;
-        }
+        //    GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+        //    _spawnedEnemies.Add(enemy);
+        //    _enemyToFab[enemy] = enemyPrefab;
+        //}*/
     }
+
+    private void EnemySpawning()
+    {
+        int nrOfEnem = Random.Range(1, 6);
+        for (int i = 0; i < nrOfEnem; i++)
+        {
+            if (spawnPoints.Count == 0)
+            {
+                return;
+            }
+            int index = Random.Range(0, spawnPoints.Count);
+            Transform spawnP = spawnPoints[index];
+            int enemytype = Random.Range(0, enemytypes.Length);
+            GameObject prefabtype = enemytypes[enemytype];
+            Debug.Log("Spawning at " + spawnP);
+            Instantiate(prefabtype, spawnP.position, spawnP.rotation, enemyParent);
+
+        }
+
+    }
+
     #region saving
     public void Save(ref SceneEnemyData data)
     {
         List<EnemySaveData> enemySaveDataList = new List<EnemySaveData>();
 
-        for (int i = _spawnedEnemies.Count - 1;i >= 0; i--)
+        for (int i = _spawnedEnemies.Count - 1; i >= 0; i--)
         {
             if (_spawnedEnemies[i] != null)
             {
-               
+
                 GameObject enemy = _spawnedEnemies[i];
                 EnemyController ec = enemy.GetComponent<EnemyController>();
 
@@ -93,7 +119,8 @@ public class SpawnManager : MonoBehaviour
     public void Load(SceneEnemyData data)
     {
         DestroyAllEnemies();
-        foreach (var enemyData in data.Enemies) {
+        foreach (var enemyData in data.Enemies)
+        {
             if (enemyData.EnemyPrefab != null)
             {
                 GameObject spawnedEnem = Instantiate(enemyData.EnemyPrefab, enemyData.Position, Quaternion.identity);
@@ -105,9 +132,8 @@ public class SpawnManager : MonoBehaviour
         }
         #endregion
 
-    } 
+    }
 }
-
 [System.Serializable]
 public struct SceneEnemyData
 {

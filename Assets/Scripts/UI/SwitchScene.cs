@@ -20,7 +20,8 @@ public class SwitchScene : MonoBehaviour
     public void SwitchAndLoad()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.LoadSceneAsync("MainTim2");
+        Time.timeScale = 1f;
+        SceneManager.LoadSceneAsync("MainTim");
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -31,7 +32,8 @@ public class SwitchScene : MonoBehaviour
 
     public void playMainGame()
     {
-        SceneManager.LoadScene("MainTim2");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainTim");
     }
 
     public void QuitGame()

@@ -18,7 +18,7 @@ public class ComboManager : MonoBehaviour
     private bool isDecaying = false;
     public int comboincrease = 1;
 
-    public event Action<int> OnComboChanged; //lowk deprecated ill see if i can remove it
+    public event Action<int> OnComboChanged;
     void Awake()
     {
         if (instance == null)
@@ -40,7 +40,7 @@ public class ComboManager : MonoBehaviour
             comboCount -= Mathf.CeilToInt(decay * Time.deltaTime);
             comboCount = Mathf.Max(0, comboCount); //oops it went into negative
             UpdateUI();
-            OnComboChanged?.Invoke(comboCount);//this is stupid not using this anymor
+            OnComboChanged?.Invoke(comboCount);
             if(comboCount == 0)
             {
                 isDecaying = false;
@@ -99,7 +99,7 @@ public class ComboManager : MonoBehaviour
         comboTxt.text = "COMBO: " + comboCount.ToString();
     }
 
-#region 
+    #region 
     public void Save(ref ComboData data)
     {
         data.comboCount = comboCount;

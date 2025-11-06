@@ -1,39 +1,9 @@
 fileFormatVersion: 2
-guid: c227f9faf7b7844a9ac0efd2e98313ff
+guid: 4ec3a7645e7b8774ba299df3579c9526
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: poles
-    second: {fileID: 2100000, guid: 5efa4539194ea4ce1bf4f84bdaad5b2b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: ropes
-    second: {fileID: 2100000, guid: 862852a0265144fc99860e17f5a2ca20, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: stairs
-    second: {fileID: 2100000, guid: 86f29b96347e3480496363066e4f4d66, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: stairs_one
-    second: {fileID: 2100000, guid: 127b4816cceeb40b98dde15bb66889f7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: stairs_three
-    second: {fileID: 2100000, guid: 304bd433c3bb94779a339d5b83e9965f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: stairs_two
-    second: {fileID: 2100000, guid: c70bc4a3f16da4461ba25ad3637ad416, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

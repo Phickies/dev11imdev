@@ -12,6 +12,7 @@ public class SaveSystem
         public PlayerData PlayerDat;
         public ComboData ComboDat;
         public SceneEnemyData EnemyData;
+        public CardData CardDat;
 
     }
 
@@ -35,6 +36,7 @@ public class SaveSystem
         GameManager.Instance.playerManager.Save(ref _saveData.PlayerDat);
         GameManager.Instance.comboMan.Save(ref _saveData.ComboDat);
         GameManager.Instance.spawnManager.Save(ref _saveData.EnemyData);
+        GameManager.Instance.cardman.Save(ref _saveData.CardDat);
     }
 
     public static void Load()
@@ -53,5 +55,6 @@ public class SaveSystem
         {
             spawnManager.Load(_saveData.EnemyData);
         }
+        GameManager.Instance.cardman.Load(_saveData.CardDat);
     }
 }

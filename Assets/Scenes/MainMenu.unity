@@ -339,7 +339,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 79708397}
+      - m_Target: {fileID: 1370299508}
         m_TargetAssemblyTypeName: SwitchScene, Assembly-CSharp
         m_MethodName: playMainGame
         m_Mode: 1
@@ -350,7 +350,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
 --- !u!114 &79708395
 MonoBehaviour:
   m_ObjectHideFlags: 0
