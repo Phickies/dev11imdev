@@ -31,6 +31,10 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private bool enableDebugLogs = false;
     [SerializeField] public bool invincible = false;
 
+    [Header("Zone Settings")]
+    [SerializeField] private float startZoneVerticalOffset = 25f;
+    [SerializeField] private Vector3 bossDefeatedTeleportPosition = new Vector3(0f, 45f, 0f);
+
     // Fall tracking variables
     private bool isFalling = false;
     public bool isDead = false;
@@ -39,6 +43,7 @@ public class PlayerManager : MonoBehaviour
     public Image damageImage;
     public float damageDuration;
     public GameObject deathUI;
+    public GameManager gameManager;
 
     private bool damaged;
     public AudioSource audioSource;
@@ -52,6 +57,19 @@ public class PlayerManager : MonoBehaviour
         if (characterController == null)
         {
             characterController = GetComponent<CharacterController>();
+        }
+
+        if (gameManager == null)
+        {
+            gameManager = GameManager.Instance;
+            if (gameManager == null)
+            {
+                gameManager = FindFirstObjectByType<GameManager>();
+            }
+            if (gameManager == null)
+            {
+                Debug.LogError("PlayerManager could not find a GameManager instance in the scene.");
+            }
         }
 
         highestPoint = transform.position.y;
@@ -155,7 +173,7 @@ public class PlayerManager : MonoBehaviour
     private IEnumerator FlashCoroutine()
     {
         damaged = true;
-        damageImage.gameObject.SetActive(true);  
+        damageImage.gameObject.SetActive(true);
         yield return new WaitForSeconds(damageDuration);
         damageImage.gameObject.SetActive(false);
         damaged = false;
@@ -240,6 +258,68 @@ public class PlayerManager : MonoBehaviour
             audioSource.PlayOneShot(jumpSound);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other == null || isDead)
+        {
+            return;
+        }
+
+        switch (other.tag)
+        {
+            case "Dead zone":
+                HandleDeathZone();
+                break;
+
+            case "Start zone":
+                HandleStartZone();
+                break;
+
+            case "Finish zone":
+                HandleFinishZone();
+                break;
+
+            case "Defeated boss":
+                HandleBossDefeatedZone();
+                break;
+
+            case "Final round":
+                gameManager.StartBossRave();
+                break;
+        }
+    }
+
+    private void HandleDeathZone()
+    {
+        if (invincible)
+        {
+            return;
+        }
+
+        int lethalDamage = Mathf.Max(1, currentHealth);
+        TakeDamage(lethalDamage);
+    }
+
+    private void HandleStartZone()
+    {
+        Vector3 targetPosition = transform.position;
+        targetPosition.y += startZoneVerticalOffset;
+        warpTo(targetPosition);
+    }
+
+    private void HandleFinishZone()
+    {
+        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Debug.Log("Player has reached the finish zone!");
+    }
+
+    private void HandleBossDefeatedZone()
+    {
+        warpTo(bossDefeatedTeleportPosition);
+    }
+
     #region save and load
 
     public void Save(ref PlayerData data)
@@ -262,6 +342,7 @@ public class PlayerManager : MonoBehaviour
     #endregion
 
 }
+
 [System.Serializable]
 public struct PlayerData
 {

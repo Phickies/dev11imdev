@@ -8,6 +8,8 @@ TagManager:
   - Dead zone
   - Finish zone
   - Start zone
+  - Defeated boss
+  - Final round
   layers:
   - Default
   - TransparentFX
