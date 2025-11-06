@@ -47,7 +47,7 @@ public class CardManager : MonoBehaviour
 
 
         //check for input to activate card
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetMouseButtonDown(1))
         {
             if(availableCards.Count > 0)
             {
