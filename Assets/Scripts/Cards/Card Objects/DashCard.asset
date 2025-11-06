@@ -17,3 +17,4 @@ MonoBehaviour:
   description: Propels forward
   duration: 0
   effect: {fileID: 11400000, guid: 9bc888b1e17539b4e9bc859638125731, type: 2}
+  cardSprite: {fileID: 21300000, guid: 579783452d6a64f44bcb7de958c648e9, type: 3}

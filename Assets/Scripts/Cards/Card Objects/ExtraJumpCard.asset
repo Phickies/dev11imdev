@@ -17,3 +17,4 @@ MonoBehaviour:
   description: Gives a midair jump
   duration: 0
   effect: {fileID: 11400000, guid: 105f492e2b45e564981b38b6ea01524c, type: 2}
+  cardSprite: {fileID: 21300000, guid: 39742c4c09031e21d9bbe942b7840128, type: 3}

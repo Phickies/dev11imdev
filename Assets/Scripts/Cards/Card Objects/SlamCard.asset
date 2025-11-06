@@ -17,3 +17,4 @@ MonoBehaviour:
   description: Slams you (duh)
   duration: 0
   effect: {fileID: 11400000, guid: 43740b899469d944d9fb20b53f8ab581, type: 2}
+  cardSprite: {fileID: 21300000, guid: 1fd50e9092a1ae37cba3bf0522496ade, type: 3}

@@ -17,3 +17,4 @@ MonoBehaviour:
   description: Gives 2x Speed
   duration: 10
   effect: {fileID: 11400000, guid: 4fef631302e6644409a1fa9c1d5b118b, type: 2}
+  cardSprite: {fileID: 21300000, guid: 48cb77d23483d7db58130573a701d8e3, type: 3}

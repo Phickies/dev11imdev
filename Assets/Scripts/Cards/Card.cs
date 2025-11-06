@@ -8,4 +8,6 @@ public class Card : ScriptableObject
     public string description;
     public float duration;
     public Effect effect;
+    public Sprite cardSprite;
+    
 }
