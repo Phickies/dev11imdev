@@ -19,6 +19,10 @@ public class CardManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(availableCards.Count == 0)
+        {
+            return; //this gave me so many errros bruh
+        }
         float scroll = Input.mouseScrollDelta.y;
         if(scroll > 0f)
         {
@@ -99,4 +103,28 @@ public class CardManager : MonoBehaviour
     {
         // Maybe discard feature eventually
     }
+    public void Save(ref CardData cardData)
+    {
+        cardData.Cards = new List<Card>();
+
+        foreach (var card in availableCards)
+        {
+            cardData.Cards.Add(card);
+        }
+    }
+    public void Load(CardData cardData)
+    {
+        availableCards.Clear();
+
+        foreach (var card in cardData.Cards)
+        {
+            AddCard(card);
+        }
+    }
+}
+
+[System.Serializable]
+public struct CardData
+{
+    public List<Card> Cards;
 }

@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -20,6 +21,8 @@ namespace Assets.Scripts
         private float xRotation = 0f;
         private float targetXRotation = 0f;
         private float targetYRotation = 0f;
+        public GameObject pauseMenuManager;
+        public GameObject playas;
 
         private void Start()
         {
@@ -29,7 +32,7 @@ namespace Assets.Scripts
 
             // Offset the camera for player view
             gameObject.transform.position = playerBody.transform.position + offset;
-
+            
             // Find player body if not assigned
             if (playerBody == null && transform.parent != null)
             {
@@ -40,6 +43,22 @@ namespace Assets.Scripts
 #pragma warning disable S2325
         private void Update()
         {
+            if (pauseMenuManager != null)
+            {
+                PauseMenu manager = pauseMenuManager.GetComponent<PauseMenu>();
+                if (manager.isPaused)
+                {
+                    return;
+                }
+            }
+            if ( playas != null ){ }
+            {
+                PlayerManager playman = playas.GetComponent<PlayerManager>();
+                if (playman.isDead)
+                {
+                    return;
+                }
+            }
             // Handle cursor lock/unlock in Update (input detection)
             if (Input.GetKeyDown(KeyCode.Escape))
             {

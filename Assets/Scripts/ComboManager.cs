@@ -98,4 +98,24 @@ public class ComboManager : MonoBehaviour
     {
         comboTxt.text = "COMBO: " + comboCount.ToString();
     }
+
+    #region 
+    public void Save(ref ComboData data)
+    {
+        data.comboCount = comboCount;
+        Debug.Log("Saved combo count = " + comboCount);
+    }
+
+    public void Load(ComboData data)
+    {
+        comboCount = data.comboCount;
+        comboTimer = comboTimeout;
+        UpdateUI();
+    }
+    #endregion
+}
+[System.Serializable]
+public struct ComboData
+{
+    public int comboCount;
 }

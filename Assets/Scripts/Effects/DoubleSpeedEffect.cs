@@ -9,13 +9,11 @@ public class DoubleSpeedEffect : Effect
     public override void ApplyEffect(PlayerControllers controller)
     {
         controller.walkSpeed *= speedMultiplier;
-        controller.runSpeed *= speedMultiplier;
     }
 
     public override void RemoveEffect(PlayerControllers controller)
     {
         //TODO: a bit unsafe so ill have to check
         controller.walkSpeed /= speedMultiplier;
-        controller.runSpeed /= speedMultiplier;
     }
 }

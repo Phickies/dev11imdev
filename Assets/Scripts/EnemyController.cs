@@ -4,8 +4,10 @@ using UnityEngine.Rendering;
 public class EnemyController : MonoBehaviour
 {
     public ParticleSystem hitParticle;
-    public float maxHealth = 100f;
+    public float maxHealth = 10f;
     private float currentHealth = 0f;
+
+    public GameObject[] loot;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,15 +51,29 @@ public class EnemyController : MonoBehaviour
 
     private void KMS(Color color)
     {
-        //add cool particle
-        Destroy(gameObject);
 
-        Debug.Log($"{name} died!");
+        int drops = Random.Range(1, 3); 
+
+        for (int i = 0; i < drops; i++)
+        {
+            
+            int index = Random.Range(0, loot.Length); 
+
+            
+            Vector3 offset = Random.insideUnitSphere * 0.5f; // so they dont spawn in each other
+            offset.y = 0; 
+
+            Instantiate(loot[index], transform.position + offset, Quaternion.identity);
+        }
+        Debug.Log("im dead bruh");
 
        
         SpawnManager spawner = FindFirstObjectByType<SpawnManager>();
         if (spawner != null)
-            spawner.SpawnEnemy();
+        {
+            Debug.Log("Enemies inconeming");
+            spawner.SpawnWave(3);
+        }
 
         Destroy(gameObject);
     }
@@ -74,5 +90,13 @@ public class EnemyController : MonoBehaviour
             case 6: return new Color(255f / 255f, 215f / 255f, 0f / 255f);//gold
             default: return Color.white;
         }
+    }
+    public float GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+    public void SetCurrentHealth(float health)
+    {
+        currentHealth = health;
     }
 }
