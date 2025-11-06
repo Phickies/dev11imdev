@@ -18662,26 +18662,6 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8294167727389061353, guid: b54b485b180104625b910bd770d2d01a, type: 3}
   bulletSpeed: 40
   dashDuration: 0.3
-<<<<<<<< HEAD:Assets/Scenes/Phicks_Main.unity
-========
---- !u!114 &1756787101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1756787095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 820cfa9d59caa44218f37aa3adf33a7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  fallDamageThreshold: 5
-  fallDamageMultiplier: 5
-  enableDebugLogs: 0
-  invincible: 0
-  infiniteDash: 0
 --- !u!1 &1760226418
 GameObject:
   m_ObjectHideFlags: 0
@@ -18818,7 +18798,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1760226418}
   m_CullTransparentMesh: 1
->>>>>>>> origin/main:Assets/Scenes/MainTim.unity
 --- !u!43 &1786228386
 Mesh:
   m_ObjectHideFlags: 0
@@ -43472,11 +43451,8 @@ SceneRoots:
   - {fileID: 1141601745}
   - {fileID: 1756787096}
   - {fileID: 240686581}
-<<<<<<<< HEAD:Assets/Scenes/Phicks_Main.unity
   - {fileID: 1968330707}
-========
   - {fileID: 1942947464}
   - {fileID: 1195284880}
   - {fileID: 496284326}
   - {fileID: 1890731316}
->>>>>>>> origin/main:Assets/Scenes/MainTim.unity
