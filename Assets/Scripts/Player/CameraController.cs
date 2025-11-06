@@ -22,7 +22,6 @@ namespace Assets.Scripts
         private float targetXRotation = 0f;
         private float targetYRotation = 0f;
         public GameObject pauseMenuManager;
-        public GameObject playas;
 
         private void Start()
         {
@@ -43,18 +42,11 @@ namespace Assets.Scripts
 #pragma warning disable S2325
         private void Update()
         {
+            // Check if already included pause menu manager
             if (pauseMenuManager != null)
             {
                 PauseMenu manager = pauseMenuManager.GetComponent<PauseMenu>();
                 if (manager.isPaused)
-                {
-                    return;
-                }
-            }
-            if ( playas != null ){ }
-            {
-                PlayerManager playman = playas.GetComponent<PlayerManager>();
-                if (playman.isDead)
                 {
                     return;
                 }
