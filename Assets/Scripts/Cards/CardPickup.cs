@@ -3,10 +3,13 @@ using UnityEngine;
 public class CardPickup : MonoBehaviour
 {
     public Card cardToGive;
+    public AudioClip pickupSound; 
+    private AudioSource audioSource;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        audioSource = GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
@@ -23,7 +26,11 @@ public class CardPickup : MonoBehaviour
         {
             Debug.Log("Player picked up a card: " + cardToGive.name);
             cardManager.AddCard(cardToGive);
+
+            if (pickupSound != null){
+                  AudioSource.PlayClipAtPoint(pickupSound, other.transform.position);
         }
+    }
         Destroy(gameObject);
     }
 }
